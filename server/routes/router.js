@@ -356,8 +356,8 @@ router.route("/Declikes:email").post(async (req, res) => {
 //User's Post
 router.route("/userPost:userEmail").get(async (req, res) => {
   try {
-    const userEmail=req.params.userEmail
-    const posts = await user.find({email:userEmail});
+    const userEmail = req.params.userEmail;
+    const posts = await user.find({ email: userEmail });
     res.status(200).json({
       post: posts,
     });
@@ -368,12 +368,13 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 
 //add comment's on the post
 
-router.route('/addComment:userEmail').post(async(req,res)=>{
-  const{desc,userId,postId}=req.body
-  const userEmail=req.params.userEmail
+router.route("/addComment:userEmail").post(async (req, res) => {
+  try {
+    const { desc, userId, postId } = req.body;
+    const userEmail = req.params.userEmail;
 
-  const userPost=await user.findOne({email:userEmail})
-  let userPostDetails = userPost.post_details;
+    const userPost = await user.findOne({ email: userEmail });
+    let userPostDetails = userPost.post_details;
 
     const findPost = userPost.post_details.filter((post, id) => {
       return post.postId == postId;
@@ -386,39 +387,38 @@ router.route('/addComment:userEmail').post(async(req,res)=>{
       .map((data, id) => {
         return data.comment;
       });
-      
 
-      const updateComment=[...filterPostComment,[{desc:desc,userId:userId}]]
-      console.log(updateComment)
+    const updateComment = [
+      ...filterPostComment,
+      [{ desc: desc, userId: userId }],
+    ];
+    console.log(updateComment);
 
     //retrive data
-      // const da=updateComment.map((dat)=>{
-      //   return dat.map((e)=>{
-      //     return e.desc
-          
-      //   })
-      // })
-      // console.log(da)
+    // const da=updateComment.map((dat)=>{
+    //   return dat.map((e)=>{
+    //     return e.desc
 
-      findPost.every((element) => (element.comment = updateComment));
-      console.log(userPostDetails)
+    //   })
+    // })
+    // console.log(da)
 
-      const updatePostComment = await user.findOneAndUpdate(
-        { email: userEmail },
-  
-        { post_details: [...userPostDetails] },
-        { new: true }
-      );
-      
-      
+    findPost.every((element) => (element.comment = updateComment));
+    console.log(userPostDetails);
 
+    const updatePostComment = await user.findOneAndUpdate(
+      { email: userEmail },
 
+      { post_details: [...userPostDetails] },
+      { new: true }
+    );
 
- 
-     
+    console.log(updatePostComment)
 
-
-
-})
+    res.status(200).json({ userPost: updateComment });
+  } catch (error) {
+    res.status(400).json({ err: error });
+  }
+});
 
 module.exports = router;
