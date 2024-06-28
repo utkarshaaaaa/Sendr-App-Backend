@@ -223,7 +223,7 @@ router.route("/following:email").post(async (req, res) => {
       { Following: [...findUserAccounts.Following, accId] },
       { new: true }
     );
-    res.status(200).json({ user: updateUserFollowing });
+   
   } catch (error) {
     res.status(400).json({ error: error });
   }
@@ -366,10 +366,10 @@ router.route("/userPost:userEmail").get(async (req, res) => {
   }
 });
 
-//add comment's on the post
+//add comment's on the post using postId
 
 router.route("/addComment:userEmail").post(async (req, res) => {
-  
+
   try {
     const { desc, userId, postId } = req.body;
     const userEmail = req.params.userEmail;
@@ -417,7 +417,9 @@ router.route("/addComment:userEmail").post(async (req, res) => {
     console.log(updatePostComment)
 
     res.status(200).json({ userPost: updateComment });
+
   } catch (error) {
+
     res.status(400).json({ err: error });
   }
 });
