@@ -366,7 +366,7 @@ router.route("/userPost:userEmail").get(async (req, res) => {
   }
 });
 
-//add comment's on the post using postId
+//add comments in the post using postId
 
 router.route("/addComment:userEmail").post(async (req, res) => {
 
