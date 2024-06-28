@@ -8,6 +8,7 @@ const asynchandler = require("express-async-handler");
 const router = express.Router();
 
 const user = require("../models/schema");
+const { fileURLToPath } = require("url");
 //npm run dev
 
 router.route("/reg:email").post(
@@ -48,7 +49,6 @@ router.route("/reg:email").post(
         res.status(200).json({ user: actualuser, token: tokenreg });
       }
     }
-    
   })
 );
 
@@ -186,28 +186,23 @@ router.route("/get_posts").get(async (req, res) => {
 });
 
 //Sharing post
-router.route('/share:Share_email').post(async(req,res)=>{
-    const{postId}=req.body
-    const pEmail=req.params.Share_email
+router.route("/share:Share_email").post(async (req, res) => {
+  try {
+    const { postId } = req.body;
+    const pEmail = req.params.Share_email;
 
-    const shareUserDetails=await user.findOne({email:pEmail})
+    const shareUserDetails = await user.findOne({ email: pEmail });
 
-
-
-    const UpdateshareUserDetails=await user.findOneAndUpdate(
-        { email: pEmail },
-        { Sharing: [...shareUserDetails.Sharing, postId] },
-        { new: true }
-      );
-      res.status(200).json({ user: user_name });
-
-
-
-
-
-
-
-})
+    const UpdateshareUserDetails = await user.findOneAndUpdate(
+      { email: pEmail },
+      { Sharing: [...shareUserDetails.Sharing, postId] },
+      { new: true }
+    );
+    res.status(200).json({ user: user_name, sharedBy: shareUserDetails._id });
+  } catch (error) {
+    res.status(400).json({ err: error });
+  }
+});
 
 //following
 
@@ -230,9 +225,27 @@ router.route("/following:email").post(async (req, res) => {
     );
     res.status(200).json({ user: updateUserFollowing });
   } catch (error) {
-
-    res.status(400).json({error:error})
+    res.status(400).json({ error: error });
   }
+});
+//Get likes of Individual post
+
+router.route("/getLikes:_id").post(async (req, res) => {
+  const Id = req.params._id;
+
+  const { postId } = req.body;
+
+  const SinglePostLikes = await user.findOne({ _id: Id });
+
+  const postLikes = SinglePostLikes.post_details
+    .map((prop) => {
+      return prop;
+    })
+    .filter((elements) => {
+      return elements.postId == postId;
+    });
+
+  res.status(200).json({ post: postLikes });
 });
 
 //Increase or decrease the likes
@@ -339,5 +352,73 @@ router.route("/Declikes:email").post(async (req, res) => {
     res.status(400).json({ err: error });
   }
 });
+
+//User's Post
+router.route("/userPost:userEmail").get(async (req, res) => {
+  try {
+    const userEmail=req.params.userEmail
+    const posts = await user.find({email:userEmail});
+    res.status(200).json({
+      post: posts,
+    });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+//add comment's on the post
+
+router.route('/addComment:userEmail').post(async(req,res)=>{
+  const{desc,userId,postId}=req.body
+  const userEmail=req.params.userEmail
+
+  const userPost=await user.findOne({email:userEmail})
+  let userPostDetails = userPost.post_details;
+
+    const findPost = userPost.post_details.filter((post, id) => {
+      return post.postId == postId;
+    });
+
+    const filterPostComment = userPost.post_details
+      .filter((postDetails, id) => {
+        return postDetails.postId == postId;
+      })
+      .map((data, id) => {
+        return data.comment;
+      });
+      
+
+      const updateComment=[...filterPostComment,[{desc:desc,userId:userId}]]
+      console.log(updateComment)
+
+    //retrive data
+      // const da=updateComment.map((dat)=>{
+      //   return dat.map((e)=>{
+      //     return e.desc
+          
+      //   })
+      // })
+      // console.log(da)
+
+      findPost.every((element) => (element.comment = updateComment));
+      console.log(userPostDetails)
+
+      const updatePostComment = await user.findOneAndUpdate(
+        { email: userEmail },
+  
+        { post_details: [...userPostDetails] },
+        { new: true }
+      );
+      
+      
+
+
+
+ 
+     
+
+
+
+})
 
 module.exports = router;

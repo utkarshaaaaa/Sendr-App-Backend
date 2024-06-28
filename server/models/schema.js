@@ -42,7 +42,7 @@ const dataSchema= new mongoose.Schema({
         default:[
         {   
             postDesc: String,
-            comment: String,
+            comment: [],
             likes: Number,
             postId:String
         }
