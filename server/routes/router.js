@@ -423,5 +423,8 @@ router.route("/addComment:userEmail").post(async (req, res) => {
     res.status(400).json({ err: error });
   }
 });
-
+//get individual post comment
+router.route("/getComments").post((req,res)=>{
+  
+})
 module.exports = router;
