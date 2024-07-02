@@ -368,63 +368,116 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 
 //add comments in the post using postId
 
-router.route("/addComment:userEmail").post(async (req, res) => {
+// router.route("/addComment:userEmail").post(async (req, res) => {
 
-  try {
-    const { desc, userId, postId } = req.body;
-    const userEmail = req.params.userEmail;
+//   try {
+//     const { postDetails, postId } = req.body;
+//     const userEmail = req.params.userEmail;
 
-    const userPost = await user.findOne({ email: userEmail });
-    let userPostDetails = userPost.post_details;
+//     const userPost = await user.findOne({ email: userEmail });
+//     let userPostDetails = userPost.post_details;
 
-    const findPost = userPost.post_details.filter((post, id) => {
-      return post.postId == postId;
-    });
+//     const findPost = userPost.post_details.filter((post, id) => {
+//       return post.postId == postId;
+//     });
 
-    const filterPostComment = userPost.post_details
-      .filter((postDetails, id) => {
-        return postDetails.postId == postId;
-      })
-      .map((data, id) => {
-        return data.comment;
-      });
+//     const filterPostComment = userPost.post_details
+//       .filter((postDetails, id) => {
+//         return postDetails.postId == postId;
+//       })
+//       .map((data, id) => {
+//         return data.comment;
+//       });
 
-    const updateComment = [
-      ...filterPostComment,
-      [{ desc: desc, userId: userId }],
-    ];
-    console.log(updateComment);
+//     const prevData=[...filterPostComment]
 
-    //retrive data
-    // const da=updateComment.map((dat)=>{
-    //   return dat.map((e)=>{
-    //     return e.desc
+//     const updateComment = [
+//        ...prevData,
+//       postDetails,
+//     ];
+//     // console.log(updateComment);
+   
+//     //  const upcomment=[...updateComment]
+//     // // retrive data
+//     //  const data=upcomment.map((dat)=>{
+//     //   return dat.map((e)=>{
+//     //     return e.comment
 
-    //   })
-    // })
-    // console.log(da)
+//     //   })
+//     // })
+//     // console.log(data)
 
-    findPost.every((element) => (element.comment = updateComment));
-    console.log(userPostDetails);
+  
+ 
+//     findPost.every((element) => (element.comment = updateComment));
+//     console.log(...userPostDetails);
 
-    const updatePostComment = await user.findOneAndUpdate(
-      { email: userEmail },
+//     const updatePostComment = await user.findOneAndUpdate(
+//       { email: userEmail },
 
-      { post_details: [...userPostDetails] },
-      { new: true }
-    );
+//       { post_details: [...userPostDetails] },
+//       { new: true }
+//     );
 
-    console.log(updatePostComment)
+   
 
-    res.status(200).json({ userPost: updateComment });
+//     res.status(200).json({ userPost: updateComment });
 
-  } catch (error) {
+//   } catch (error) {
 
-    res.status(400).json({ err: error });
-  }
-});
+//     res.status(400).json({ err: error });
+//   }
+// });
+
+
+router.route('/addComment:email').post(async(req,res)=>{
+
+  const{commentDetails}=req.body
+
+  const userEmail=req.params.email
+  const findUser=await user.findOne({email:userEmail})
+  const updateComment = await user.findOneAndUpdate(
+          { email: userEmail },
+    
+          { comment: [...findUser.comment,commentDetails] },
+          { new: true }
+        );
+
+
+  console.log(findUser)
+  res.status(200).json({comment:updateComment})
+  
+
+
+})
+
+
 //get individual post comment
-router.route("/getComments").post((req,res)=>{
+router.route("/getComments:email").get(async(req,res)=>{
+  // const{postId}=req.body
+  // const userEmail=req.params.email
+  // const userPost = await user.findOne({ email: userEmail });
+  // let userPostDetails = userPost.post_details;
+
+  // const findPost = userPost.post_details.filter((post, id) => {
+  //   return post.postId == postId;
+  // });
+
+  // const filterPostComment = userPost.post_details
+  //   .filter((postDetails, id) => {
+  //     return postDetails.postId == postId;
+  //   })
+  //   .map((data, id) => {
+  //     return data.comment;
+  //   })
+   
+  //   console.log(...filterPostComment)
+
+  const userEmail=req.params.email
+  
+
+  
+
   
 })
 module.exports = router;

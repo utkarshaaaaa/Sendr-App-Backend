@@ -42,7 +42,6 @@ const dataSchema= new mongoose.Schema({
         default:[
         {   
             postDesc: String,
-            comment: [],
             likes: Number,
             postId:String
         }
@@ -53,7 +52,12 @@ const dataSchema= new mongoose.Schema({
     Shared:{
         type:Array,
         default:[]
-    }
+    },
+    comment:{
+        type:Array,
+      
+    },
+
     
         
         
