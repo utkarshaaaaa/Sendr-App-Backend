@@ -223,7 +223,6 @@ router.route("/following:email").post(async (req, res) => {
       { Following: [...findUserAccounts.Following, accId] },
       { new: true }
     );
-   
   } catch (error) {
     res.status(400).json({ error: error });
   }
@@ -396,7 +395,7 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 //       postDetails,
 //     ];
 //     // console.log(updateComment);
-   
+
 //     //  const upcomment=[...updateComment]
 //     // // retrive data
 //     //  const data=upcomment.map((dat)=>{
@@ -407,8 +406,6 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 //     // })
 //     // console.log(data)
 
-  
- 
 //     findPost.every((element) => (element.comment = updateComment));
 //     console.log(...userPostDetails);
 
@@ -419,8 +416,6 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 //       { new: true }
 //     );
 
-   
-
 //     res.status(200).json({ userPost: updateComment });
 
 //   } catch (error) {
@@ -429,31 +424,24 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 //   }
 // });
 
+router.route("/addComment:email").post(async (req, res) => {
+  const { commentDetails } = req.body;
 
-router.route('/addComment:email').post(async(req,res)=>{
-
-  const{commentDetails}=req.body
-
-  const userEmail=req.params.email
-  const findUser=await user.findOne({email:userEmail})
+  const userEmail = req.params.email;
+  const findUser = await user.findOne({ email: userEmail });
   const updateComment = await user.findOneAndUpdate(
-          { email: userEmail },
-    
-          { comment: [...findUser.comment,commentDetails] },
-          { new: true }
-        );
+    { email: userEmail },
 
+    { comment: [...findUser.comment, commentDetails] },
+    { new: true }
+  );
 
-  console.log(findUser)
-  res.status(200).json({comment:updateComment})
-  
-
-
-})
-
+  console.log(findUser);
+  res.status(200).json({ comment: updateComment });
+});
 
 //get individual post comment
-router.route("/getComments:email").get(async(req,res)=>{
+router.route("/getComments:email").get(async (req, res) => {
   // const{postId}=req.body
   // const userEmail=req.params.email
   // const userPost = await user.findOne({ email: userEmail });
@@ -470,14 +458,21 @@ router.route("/getComments:email").get(async(req,res)=>{
   //   .map((data, id) => {
   //     return data.comment;
   //   })
-   
+
   //   console.log(...filterPostComment)
 
-  const userEmail=req.params.email
-  
+  try {
+    const userEmail = req.params.email;
+    const { postId } = req.body;
+    const findUser = await user.findOne({ email: userEmail });
 
-  
+    const comments = findUser.comment.filter((postComment) => {
+      return postComment.postId == postId;
+    });
 
-  
-})
+    res.status(200).json({ comment: comments });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+});
 module.exports = router;
