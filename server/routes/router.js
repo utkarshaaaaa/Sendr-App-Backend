@@ -246,6 +246,19 @@ router.route("/getLikes:_id").post(async (req, res) => {
 
   res.status(200).json({ post: postLikes });
 });
+router.route("/getAllLikes:_id").post(async (req, res) => {
+  const Id = req.params._id;
+
+  const SinglePostLikes = await user.findOne({ _id: Id });
+
+  const postLikes = SinglePostLikes.post_details
+    .map((prop) => {
+      return prop.likes;
+    })
+   
+
+  res.status(200).json({ post: postLikes });
+});
 
 //Increase or decrease the likes
 //Increase Likes
@@ -441,7 +454,7 @@ router.route("/addComment:email").post(async (req, res) => {
 });
 
 //get individual post comment
-router.route("/getComments:email").get(async (req, res) => {
+router.route("/getComments:email").post(async (req, res) => {
   // const{postId}=req.body
   // const userEmail=req.params.email
   // const userPost = await user.findOne({ email: userEmail });
