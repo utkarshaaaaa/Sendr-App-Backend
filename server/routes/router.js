@@ -438,14 +438,14 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 // });
 
 router.route("/addComment:email").post(async (req, res) => {
-  const { commentDetails } = req.body;
+  const { desc,userId,postId } = req.body;
 
   const userEmail = req.params.email;
   const findUser = await user.findOne({ email: userEmail });
   const updateComment = await user.findOneAndUpdate(
     { email: userEmail },
 
-    { comment: [...findUser.comment, commentDetails] },
+    { comment: [...findUser.comment, {desc:desc,userId:userId,postId:postId}] },
     { new: true }
   );
 
@@ -488,4 +488,6 @@ router.route("/getComments:email").post(async (req, res) => {
     res.status(400).json({ error: error });
   }
 });
+
+
 module.exports = router;
