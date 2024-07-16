@@ -251,11 +251,9 @@ router.route("/getAllLikes:_id").post(async (req, res) => {
 
   const SinglePostLikes = await user.findOne({ _id: Id });
 
-  const postLikes = SinglePostLikes.post_details
-    .map((prop) => {
-      return prop.likes;
-    })
-   
+  const postLikes = SinglePostLikes.post_details.map((prop) => {
+    return prop.likes;
+  });
 
   res.status(200).json({ post: postLikes });
 });
@@ -438,14 +436,27 @@ router.route("/userPost:userEmail").get(async (req, res) => {
 // });
 
 router.route("/addComment:email").post(async (req, res) => {
-  const { desc,userId,postId } = req.body;
+  const { desc, userId, postId } = req.body;
 
   const userEmail = req.params.email;
   const findUser = await user.findOne({ email: userEmail });
+
+  const findUserName = await user.findOne({ _id: userId });
+  if (!findUserName) {
+    res.status(400).json({ error: "user does not exist" });
+  }
+
+  console.log(findUserName.User_name);
+  const userName = findUserName.User_name;
   const updateComment = await user.findOneAndUpdate(
     { email: userEmail },
 
-    { comment: [...findUser.comment, {desc:desc,userId:userId,postId:postId}] },
+    {
+      comment: [
+        ...findUser.comment,
+        { desc: desc, userName: userName, postId: postId },
+      ],
+    },
     { new: true }
   );
 
@@ -488,6 +499,5 @@ router.route("/getComments:email").post(async (req, res) => {
     res.status(400).json({ error: error });
   }
 });
-
 
 module.exports = router;
