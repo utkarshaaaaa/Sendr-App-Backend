@@ -4,11 +4,14 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const short = require("short-uuid");
+const coolkieSession=require('cookie-session')
+const passport=require('passport')
 const asynchandler = require("express-async-handler");
 const router = express.Router();
 
 const user = require("../models/schema");
 const { fileURLToPath } = require("url");
+
 //npm run dev
 
 router.route("/reg:email").post(
