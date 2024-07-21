@@ -503,6 +503,12 @@ router.route("/getComments:email").post(async (req, res) => {
   }
 });
 
+//save post data
+
+router.route('/savePost').post(((req,res)=>{
+  
+}))
+
 
 
 
