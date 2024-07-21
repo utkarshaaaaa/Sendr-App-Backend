@@ -4,13 +4,14 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const short = require("short-uuid");
-const coolkieSession=require('cookie-session')
-const passport=require('passport')
+const coolkieSession = require("cookie-session");
+const passport = require("passport");
 const asynchandler = require("express-async-handler");
 const router = express.Router();
 
 const user = require("../models/schema");
 const { fileURLToPath } = require("url");
+const { error } = require("console");
 
 //npm run dev
 
@@ -165,7 +166,11 @@ router.route("/login").post(
 //get Post details
 router.route("/post_details:email").get(async (req, res) => {
   try {
-    const user_data = await user.findOne({ email: req.params.email });
+    const userEmail = req.params.email;
+    if (!userEmail) {
+      res.status(400).json({ error: "Email not provided" });
+    }
+    const user_data = await user.findOne({ email: userEmail });
     res.status(200).json({
       pic: user_data.pic,
     });
@@ -505,12 +510,6 @@ router.route("/getComments:email").post(async (req, res) => {
 
 //save post data
 
-router.route('/savePost').post(((req,res)=>{
-  
-}))
-
-
-
-
+router.route("/savePost").post((req, res) => {});
 
 module.exports = router;
