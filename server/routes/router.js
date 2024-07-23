@@ -188,8 +188,10 @@ router.route("/get_posts").get(async (req, res) => {
     res.status(200).json({
       post: posts,
     });
+    console.log("dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",posts)
   } catch (error) {
-    res.json({ error: error });
+    res.status(400).json({ error: error });
+    
   }
 });
 

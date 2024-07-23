@@ -13,28 +13,23 @@ const app=express()
 
 
 app.use(express.json());
-
-app.use(cors())
+const corsOptions ={
+    origin:'http://localhost:3000', 
+    credentials:true,           
+    optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 //connection
 moongose.connect('mongodb://127.0.0.1:27017/notes')
-app.use(
-    coolkieSession({
-        name:"session",
-        keys:["cyberwolve"],
-        maxAge:24*60*60*100, 
-    })
-)
 
-app.use(passport.initialize())
-app.use(passport.session())
 
-app.use(
-    cors({
-        origin:"http://localhost:3001",
-        methods:"GET,POST,PUT,DELETE",
-        credentials:true
-    })
- )
+// app.use(
+//     cors({
+//         origin:"http://localhost:3001",
+//         methods:"GET,POST,PUT,DELETE",
+//         credentials:true
+//     })
+//  )
 
 app.use('/',router)
 console.log(short.generate());
