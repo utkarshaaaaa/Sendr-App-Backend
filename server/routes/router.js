@@ -188,10 +188,9 @@ router.route("/get_posts").get(async (req, res) => {
     res.status(200).json({
       post: posts,
     });
-    console.log("dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",posts)
+    console.log( posts);
   } catch (error) {
     res.status(400).json({ error: error });
-    
   }
 });
 
@@ -218,21 +217,52 @@ router.route("/share:Share_email").post(async (req, res) => {
 
 router.route("/following:email").post(async (req, res) => {
   try {
-    const Pemail = req.params.email;
+    const senderEmail = req.params.email;
 
     const { userEmail } = req.body;
-    const findAccounts = await user.findOne({ email: Pemail });
+    const findAccounts = await user.findOne({ email: senderEmail });
+    if (!findAccounts) {
+      res.json({ message: "user not found" });
+    }
     const findUserAccounts = await user.findOne({ email: userEmail });
 
     console.log(findAccounts._id.toString());
 
-    const accId = findAccounts._id.toString();
+    const accId = findUserAccounts._id.toString();
 
-    const updateUserFollowing = await user.findOneAndUpdate(
-      { email: userEmail },
-      { Following: [...findUserAccounts.Following, accId] },
+    await user.findOneAndUpdate(
+      { email: senderEmail },
+      {
+        Following: [
+          ...findAccounts.Following,
+          {
+            userName: findAccounts.User_name,
+            email: findAccounts.email,
+            id: accId,
+            pic: findAccounts.profile_image,
+          },
+        ],
+      },
       { new: true }
     );
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+});
+
+//get User following data
+router.route("/getFollowingData:userEmail").get(async (req, res) => {
+  try {
+    const Pemail = req.params.userEmail;
+
+    const findUserData = await user.findOne({ email: Pemail });
+    if (!findUserData) {
+      res.json({ message: "user not found" });
+    }
+    const followingData = findUserData.Following.map((follData, id) => {
+      return follData;
+    });
+    res.status(200).json({ data: followingData });
   } catch (error) {
     res.status(400).json({ error: error });
   }
@@ -512,9 +542,7 @@ router.route("/getComments:email").post(async (req, res) => {
 
 //save post data
 
-router.route("/savePost").post((req, res) => {
-
-});
+router.route("/savePost").post((req, res) => {});
 //
 
 module.exports = router;
