@@ -188,7 +188,7 @@ router.route("/get_posts").get(async (req, res) => {
     res.status(200).json({
       post: posts,
     });
-    console.log( posts);
+    console.log(posts);
   } catch (error) {
     res.status(400).json({ error: error });
   }
@@ -197,17 +197,23 @@ router.route("/get_posts").get(async (req, res) => {
 //Sharing post
 router.route("/share:Share_email").post(async (req, res) => {
   try {
-    const { postId } = req.body;
+    const { shareData, sendersEmail } = req.body;
     const pEmail = req.params.Share_email;
 
     const shareUserDetails = await user.findOne({ email: pEmail });
+    const senderDetails = await user.findOne({ email: sendersEmail });
+    const resData = {
+      postData: shareData,
+      senderName: senderDetails.User_name,
+      senderPic: senderDetails.profile_image,
+    };
 
-    const UpdateshareUserDetails = await user.findOneAndUpdate(
+    await user.findOneAndUpdate(
       { email: pEmail },
-      { Sharing: [...shareUserDetails.Sharing, postId] },
+      { Shared: [...shareUserDetails.Shared, resData] },
       { new: true }
     );
-    res.status(200).json({ user: user_name, sharedBy: shareUserDetails._id });
+    res.status(200).json({ sharedPostData: resData });
   } catch (error) {
     res.status(400).json({ err: error });
   }
@@ -236,10 +242,10 @@ router.route("/following:email").post(async (req, res) => {
         Following: [
           ...findAccounts.Following,
           {
-            userName: findAccounts.User_name,
-            email: findAccounts.email,
+            userName: findUserAccounts.User_name,
+            email: findUserAccounts.email,
             id: accId,
-            pic: findAccounts.profile_image,
+            pic: findUserAccounts.profile_image,
           },
         ],
       },
@@ -259,9 +265,10 @@ router.route("/getFollowingData:userEmail").get(async (req, res) => {
     if (!findUserData) {
       res.json({ message: "user not found" });
     }
-    const followingData = findUserData.Following.map((follData, id) => {
+    const followingData = findUserData.Following?.map((follData, id) => {
       return follData;
     });
+    console.log(followingData);
     res.status(200).json({ data: followingData });
   } catch (error) {
     res.status(400).json({ error: error });
