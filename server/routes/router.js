@@ -203,7 +203,7 @@ router.route("/share:Share_email").post(async (req, res) => {
     const shareUserDetails = await user.findOne({ email: pEmail });
     const senderDetails = await user.findOne({ email: sendersEmail });
     const resData = {
-      postData: shareData,
+      ...shareData,
       senderName: senderDetails.User_name,
       senderPic: senderDetails.profile_image,
     };
@@ -219,6 +219,17 @@ router.route("/share:Share_email").post(async (req, res) => {
   }
 });
 
+//get Shared Data in the inbox
+router.route("/getSharedData:email").get(async (req, res) => {
+  try {
+    const pEmail = req.params.email;
+    const findUser = await user.findOne({ email: pEmail });
+
+    res.status(200).json({ postData: [findUser.Shared] });
+  } catch (error) {
+    res.json({error:error})
+  }
+});
 //following
 
 router.route("/following:email").post(async (req, res) => {
