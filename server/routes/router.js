@@ -380,7 +380,7 @@ router.route("/Declikes:email").post(async (req, res) => {
     const userDetails = await user.findOne({ email: emailParams });
 
     if (userDetails == null) {
-      res.status(400).json({ error: "cannot find email" });
+      res.status(400).json({ error: "cannot find em  ail" });
     }
 
     let userPostDetails = userDetails.post_details;
@@ -505,14 +505,14 @@ router.route("/addComment:email").post(async (req, res) => {
   }
 
   console.log(findUserName.User_name);
-  const userName = findUserName.User_name;
+  const userName = findUser.User_name;
   const updateComment = await user.findOneAndUpdate(
-    { email: userEmail },
+    { email: findUserName.email },
 
     {
       comment: [
-        ...findUser.comment,
-        { desc: desc, userName: userName, postId: postId },
+        ...findUserName.comment,
+        { desc: desc, userName: userName, postId: postId ,userPic:findUser.profile_image},
       ],
     },
     { new: true }
@@ -551,7 +551,7 @@ router.route("/getComments:email").post(async (req, res) => {
     const comments = findUser.comment.filter((postComment) => {
       return postComment.postId == postId;
     });
-
+    console.log(comments,"comments")
     res.status(200).json({ comment: comments });
   } catch (error) {
     res.status(400).json({ error: error });
