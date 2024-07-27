@@ -195,7 +195,7 @@ router.route("/get_posts").get(async (req, res) => {
 });
 
 //Sharing post
-router.route("/share:Share_email").post(async (req, res) => {
+router.route("/shared:Share_email").post(async (req, res) => {
   try {
     const { shareData, sendersEmail } = req.body;
     const pEmail = req.params.Share_email;
@@ -208,12 +208,12 @@ router.route("/share:Share_email").post(async (req, res) => {
       senderPic: senderDetails.profile_image,
     };
 
-    await user.findOneAndUpdate(
+    const updatedSharedPost=await user.findOneAndUpdate(
       { email: pEmail },
       { Shared: [...shareUserDetails.Shared, resData] },
       { new: true }
     );
-    res.status(200).json({ sharedPostData: resData });
+    res.status(200).json({ sharedPostData: updatedSharedPost.Shared });
   } catch (error) {
     res.status(400).json({ err: error });
   }
