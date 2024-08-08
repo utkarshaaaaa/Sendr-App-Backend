@@ -565,6 +565,10 @@ router.route("/getComments:email").post(async (req, res) => {
 //save post data
 
 router.route("/savePost").post((req, res) => {});
-//
+//get all the followers
+
+router.route('/getFollower').get((req,res)=>{
+  
+})
 
 module.exports = router;
