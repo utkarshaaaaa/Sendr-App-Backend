@@ -208,7 +208,7 @@ router.route("/shared:Share_email").post(async (req, res) => {
       senderPic: senderDetails.profile_image,
     };
 
-    const updatedSharedPost=await user.findOneAndUpdate(
+    const updatedSharedPost = await user.findOneAndUpdate(
       { email: pEmail },
       { Shared: [...shareUserDetails.Shared, resData] },
       { new: true }
@@ -224,14 +224,13 @@ router.route("/getSharedData:email").get(async (req, res) => {
   try {
     const pEmail = req.params.email;
     const findUser = await user.findOne({ email: pEmail });
-    if(!findUser){
-      console.log("user not found")
+    if (!findUser) {
+      console.log("user not found");
     }
-   
 
     res.status(200).json({ postData: [findUser.Shared] });
   } catch (error) {
-    res.json({error:error})
+    res.json({ error: error });
   }
 });
 //following
@@ -297,6 +296,9 @@ router.route("/getLikes:_id").post(async (req, res) => {
   const { postId } = req.body;
 
   const SinglePostLikes = await user.findOne({ _id: Id });
+  if (!SinglePostLikes) {
+    console.log("post not found");
+  }
 
   const postLikes = SinglePostLikes.post_details
     .map((prop) => {
@@ -516,7 +518,12 @@ router.route("/addComment:email").post(async (req, res) => {
     {
       comment: [
         ...findUserName.comment,
-        { desc: desc, userName: userName, postId: postId ,userPic:findUser.profile_image},
+        {
+          desc: desc,
+          userName: userName,
+          postId: postId,
+          userPic: findUser.profile_image,
+        },
       ],
     },
     { new: true }
@@ -555,7 +562,7 @@ router.route("/getComments:email").post(async (req, res) => {
     const comments = findUser.comment.filter((postComment) => {
       return postComment.postId == postId;
     });
-    console.log(comments,"comments")
+    console.log(comments, "comments");
     res.status(200).json({ comment: comments });
   } catch (error) {
     res.status(400).json({ error: error });
@@ -567,8 +574,31 @@ router.route("/getComments:email").post(async (req, res) => {
 router.route("/savePost").post((req, res) => {});
 //get all the followers
 
-router.route('/getFollower').get((req,res)=>{
+router.route("/getFollower:user_email").get(async(req, res) => {
+
+  const userEmail= req.params.user_email;
+  const findUser= await user.findOne({email:userEmail})
+  console.log(findUser.Followers)
+
+
+
+});
+//Get user following
+router.route("/getFollowing:user_email").get(async(req, res) => {
+
+  const userEmail= req.params.user_email;
   
-})
+  const findUser= await user.findOne({email:userEmail})
+  if(!findUser){
+    throw new error("user not found")
+  }
+
+  res.json({data:findUser.Following})
+  
+
+
+
+});
+
 
 module.exports = router;
