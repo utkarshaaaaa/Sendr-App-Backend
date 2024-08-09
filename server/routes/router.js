@@ -386,7 +386,7 @@ router.route("/Declikes:email").post(async (req, res) => {
     const userDetails = await user.findOne({ email: emailParams });
 
     if (userDetails == null) {
-      res.status(400).json({ error: "cannot find em  ail" });
+      res.status(400).json({ error: "cannot find Email" });
     }
 
     let userPostDetails = userDetails.post_details;
@@ -432,6 +432,10 @@ router.route("/userPost:userEmail").get(async (req, res) => {
   try {
     const userEmail = req.params.userEmail;
     const posts = await user.find({ email: userEmail });
+    if(!posts){
+      throw new error("post not found")
+    }
+  
     res.status(200).json({
       post: posts,
     });
@@ -558,6 +562,9 @@ router.route("/getComments:email").post(async (req, res) => {
     const userEmail = req.params.email;
     const { postId } = req.body;
     const findUser = await user.findOne({ email: userEmail });
+    if (!findUser) {
+      throw new error("user not found");
+    }
 
     const comments = findUser.comment.filter((postComment) => {
       return postComment.postId == postId;
@@ -574,31 +581,21 @@ router.route("/getComments:email").post(async (req, res) => {
 router.route("/savePost").post((req, res) => {});
 //get all the followers
 
-router.route("/getFollower:user_email").get(async(req, res) => {
-
-  const userEmail= req.params.user_email;
-  const findUser= await user.findOne({email:userEmail})
-  console.log(findUser.Followers)
-
-
-
+router.route("/getFollower:user_email").get(async (req, res) => {
+  const userEmail = req.params.user_email;
+  const findUser = await user.findOne({ email: userEmail });
+  console.log(findUser.Followers);
 });
 //Get user following
-router.route("/getFollowing:user_email").get(async(req, res) => {
+router.route("/getFollowing:user_email").get(async (req, res) => {
+  const userEmail = req.params.user_email;
 
-  const userEmail= req.params.user_email;
-  
-  const findUser= await user.findOne({email:userEmail})
-  if(!findUser){
-    throw new error("user not found")
+  const findUser = await user.findOne({ email: userEmail });
+  if (!findUser) {
+    throw new error("user not found");
   }
 
-  res.json({data:findUser.Following})
-  
-
-
-
+  res.json({ data: findUser.Following });
 });
-
 
 module.exports = router;
