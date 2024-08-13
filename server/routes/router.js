@@ -197,15 +197,18 @@ router.route("/get_posts").get(async (req, res) => {
 //Sharing post
 router.route("/shared:Share_email").post(async (req, res) => {
   try {
-    const { shareData, sendersEmail } = req.body;
+    const { shareData, sendersEmail ,postUserName,postUserProfileImage} = req.body;
     const pEmail = req.params.Share_email;
 
     const shareUserDetails = await user.findOne({ email: pEmail });
     const senderDetails = await user.findOne({ email: sendersEmail });
     const resData = {
       ...shareData,
+      postUserName:postUserName,
       senderName: senderDetails.User_name,
       senderPic: senderDetails.profile_image,
+      postUserProfileImage:postUserProfileImage
+
     };
 
     const updatedSharedPost = await user.findOneAndUpdate(
@@ -282,7 +285,7 @@ router.route("/getFollowingData:userEmail").get(async (req, res) => {
     const followingData = findUserData.Following?.map((follData, id) => {
       return follData;
     });
-    console.log(followingData);
+   
     res.status(200).json({ data: followingData });
   } catch (error) {
     res.status(400).json({ error: error });
