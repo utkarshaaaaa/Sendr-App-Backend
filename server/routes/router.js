@@ -125,6 +125,10 @@ router.route("/user_data:userEmail").get(async (req, res) => {
   try {
     const User_details = await user.findOne({ email: req.params.userEmail });
 
+    if (!User_details) {
+      throw new error("User not found");
+    }
+
     if (User_details) {
       res.status(200).json({ data: User_details });
     } else {
@@ -197,18 +201,18 @@ router.route("/get_posts").get(async (req, res) => {
 //Sharing post
 router.route("/shared:Share_email").post(async (req, res) => {
   try {
-    const { shareData, sendersEmail ,postUserName,postUserProfileImage} = req.body;
+    const { shareData, sendersEmail, postUserName, postUserProfileImage } =
+      req.body;
     const pEmail = req.params.Share_email;
 
     const shareUserDetails = await user.findOne({ email: pEmail });
     const senderDetails = await user.findOne({ email: sendersEmail });
     const resData = {
       ...shareData,
-      postUserName:postUserName,
+      postUserName: postUserName,
       senderName: senderDetails.User_name,
       senderPic: senderDetails.profile_image,
-      postUserProfileImage:postUserProfileImage
-
+      postUserProfileImage: postUserProfileImage,
     };
 
     const updatedSharedPost = await user.findOneAndUpdate(
@@ -285,7 +289,7 @@ router.route("/getFollowingData:userEmail").get(async (req, res) => {
     const followingData = findUserData.Following?.map((follData, id) => {
       return follData;
     });
-   
+
     res.status(200).json({ data: followingData });
   } catch (error) {
     res.status(400).json({ error: error });
@@ -435,10 +439,10 @@ router.route("/userPost:userEmail").get(async (req, res) => {
   try {
     const userEmail = req.params.userEmail;
     const posts = await user.find({ email: userEmail });
-    if(!posts){
-      throw new error("post not found")
+    if (!posts) {
+      throw new error("post not found");
     }
-  
+
     res.status(200).json({
       post: posts,
     });
