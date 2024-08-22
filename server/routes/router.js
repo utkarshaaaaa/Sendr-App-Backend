@@ -1,5 +1,5 @@
 const express = require("express");
-const SECRET_KET = "NOTES";
+
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
