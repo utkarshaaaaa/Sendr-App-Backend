@@ -8,7 +8,6 @@ const coolkieSession = require("cookie-session");
 const passport = require("passport");
 const asynchandler = require("express-async-handler");
 const router = express.Router();
-
 const user = require("../models/schema");
 const { fileURLToPath } = require("url");
 const { error } = require("console");
@@ -56,7 +55,7 @@ router.route("/reg:email").post(
   })
 );
 
-//User name and ID
+//User name and email ID
 router.route("/user_name:email").post(async (req, res) => {
   const user_id_creation = () => {
     const Id = Math.floor(Math.random() * (10000 - 1)) + 9999;
