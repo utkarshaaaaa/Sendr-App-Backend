@@ -1,3 +1,4 @@
+//npm run dev
 const express = require("express");
 
 const jwt = require("jsonwebtoken");
@@ -590,7 +591,12 @@ router.route("/savePost").post((req, res) => {});
 router.route("/getFollower:user_email").get(async (req, res) => {
   const userEmail = req.params.user_email;
   const findUser = await user.findOne({ email: userEmail });
-  console.log(findUser.Followers);
+  if (!findUser) {
+    throw new error("user not found");
+  }
+
+  res.json({ data: findUser.Followers });
+
 });
 //Get user following
 router.route("/getFollowing:user_email").get(async (req, res) => {
@@ -601,7 +607,7 @@ router.route("/getFollowing:user_email").get(async (req, res) => {
     throw new error("user not found");
   }
 
-  res.json({ data: findUser.Following });
+  res.json({ data: findUser.Followers });
 });
 
 module.exports = router;
