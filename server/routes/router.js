@@ -204,6 +204,9 @@ router.route("/shared:Share_email").post(async (req, res) => {
     const { shareData, sendersEmail, postUserName, postUserProfileImage } =
       req.body;
     const pEmail = req.params.Share_email;
+    if(!pEmail){
+         new Error("No email found")
+    }
 
     const shareUserDetails = await user.findOne({ email: pEmail });
     const senderDetails = await user.findOne({ email: sendersEmail });
@@ -249,7 +252,9 @@ router.route("/following:email").post(async (req, res) => {
     const { userEmail } = req.body;
     const findAccounts = await user.findOne({ email: senderEmail });
     if (!findAccounts) {
-      res.json({ message: "user not found" });
+      
+      res.json({ message: "User not found" });
+      
     }
     const findUserAccounts = await user.findOne({ email: userEmail });
 
@@ -281,6 +286,7 @@ router.route("/following:email").post(async (req, res) => {
 router.route("/getFollowingData:userEmail").get(async (req, res) => {
   try {
     const Pemail = req.params.userEmail;
+ 
 
     const findUserData = await user.findOne({ email: Pemail });
     if (!findUserData) {
@@ -609,5 +615,6 @@ router.route("/getFollowing:user_email").get(async (req, res) => {
 
   res.json({ data: findUser.Followers });
 });
+
 
 module.exports = router;
