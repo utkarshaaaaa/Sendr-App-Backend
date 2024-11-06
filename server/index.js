@@ -27,5 +27,5 @@ moongose.connect('mongodb://127.0.0.1:27017/notes')
 app.use('/',router)
 console.log(short.generate());
 app.listen(3001,()=>{
-    console.log("app is running")
+    console.log("App is running on port 3001")
 })
