@@ -198,6 +198,21 @@ router.route("/get_posts").get(async (req, res) => {
   }
 });
 
+
+//Get all users data
+router.route("/get_user_data").get(async (req, res) => {
+  try {
+    const userData = await user.find();
+    res.status(200).json({
+      users: userData,
+    });
+
+  } catch (error) {
+    console.log(error)
+  }
+});
+
+
 //Sharing post
 router.route("/shared:Share_email").post(async (req, res) => {
   try {
