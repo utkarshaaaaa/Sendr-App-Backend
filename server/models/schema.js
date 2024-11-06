@@ -84,6 +84,6 @@ dataSchema.methods.matchPassword=async function(enterpassword){
 }
 
     
-const user=mongoose.model('users',dataSchema)
+const user=mongoose.model('users',dataSchema);
 
 module.exports=user
