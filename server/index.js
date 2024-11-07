@@ -22,7 +22,10 @@ app.use(cors(corsOptions));
 //connection
 moongose.connect('mongodb://127.0.0.1:27017/notes')
 
+app.get('/app',(req,res)=>{
+    res.send("ijjbjibb")
 
+})
 
 app.use('/',router)
 console.log(short.generate());
