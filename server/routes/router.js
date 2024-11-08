@@ -273,9 +273,9 @@ router.route("/following:email").post(async (req, res) => {
     }
     const findUserAccounts = await user.findOne({ email: userEmail });
 
-    console.log(findAccounts._id.toString());
+    console.log(findAccounts?._id?.toString());
 
-    const accId = findUserAccounts._id.toString();
+    const accId = findUserAccounts?._id?.toString();
 
     await user.findOneAndUpdate(
       { email: senderEmail },
@@ -292,8 +292,10 @@ router.route("/following:email").post(async (req, res) => {
       },
       { new: true }
     );
+    res.json({email:findUserAccounts.email,following:findAccounts.Following})
+    
   } catch (error) {
-    res.status(400).json({ error: error });
+    console.log(error)
   }
 });
 
