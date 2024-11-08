@@ -138,6 +138,24 @@ router.route("/user_data:userEmail").get(async (req, res) => {
     res.status(400).json({ error: error });
   }
 });
+//Get user Following
+router.route("/user_Following:userEmail").get(async (req, res) => {
+  try {
+    const User_details = await user.findOne({ email: req.params.userEmail });
+
+    if (!User_details) {
+      throw new error("User not found");
+    }
+
+    if (User_details) {
+      res.status(200).json({ Following: User_details.Following });
+    } else {
+      res.json({ error: "Invalid User Id " });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+});
 
 //login user
 
