@@ -64,6 +64,6 @@ dataSchema.methods.matchPassword = async function (enterpassword) {
   return await bcrypt.compare(enterpassword, this.password);
 };
 
-const user = mongoose.model("userData", dataSchema);
+const user = mongoose.model("users", dataSchema);
 
 module.exports = user;
