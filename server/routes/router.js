@@ -13,7 +13,6 @@ const user = require("../models/schema");
 const { fileURLToPath } = require("url");
 const { error } = require("console");
 
-//npm run dev
 
 router.route("/reg:email").post(
   asynchandler(async (req, res) => {
