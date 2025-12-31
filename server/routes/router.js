@@ -1,5 +1,6 @@
 //npm run dev
 const express = require("express");
+const { body, param, validationResult } = require("express-validator");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -13,7 +14,13 @@ const user = require("../models/schema");
 const { fileURLToPath } = require("url");
 const { error } = require("console");
 
-
+const validateRequest = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  next();
+};
 router.route("/reg:email").post(
   asynchandler(async (req, res) => {
     const { name, email, password, postData } = req.body;
@@ -59,9 +66,10 @@ router.route("/reg:email").post(
 router.route("/Createpost:email").post(
   asynchandler(async (req, res) => {
     const { postData } = req.body;
+    
     const pEmail = req.params.email;
     const userexist = await user.findOne({ email: pEmail });
-
+    
     //updating the data
     if (userexist) {
       const userPostData = await user.findOne({ email: pEmail });
@@ -146,21 +154,15 @@ router.route("/create_post:post_id").put(async (req, res) => {
 
 //Get user data
 
-router.route("/user_data:userEmail").get(async (req, res) => {
+router.get("/user_data:userEmail", async (req, res) => {
   try {
-    const User_details = await user.findOne({ email: req.params.userEmail });
-
-    if (!User_details) {
-      throw new error("User not found");
+    const userData = await user.findOne({ email: req.params.userEmail });
+    if (!userData) {
+      return res.status(404).json({ error: "User not found" });
     }
-
-    if (User_details) {
-      res.status(200).json({ data: User_details });
-    } else {
-      res.json({ error: "Invalid User Id " });
-    }
+    return res.status(200).json({ data: userData });
   } catch (error) {
-    res.status(400).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 });
 //Get user Following
@@ -496,7 +498,7 @@ router.route("/Declikes:email").post(async (req, res) => {
     );
     res.status(200).json({ user: updatedLikes });
   } catch (error) {
-    res.status(400).json({ err: error });
+    res.status(400).json({ "error": `Internal server error ${error}` });
   }
 });
 
