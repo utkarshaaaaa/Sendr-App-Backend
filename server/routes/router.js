@@ -295,7 +295,8 @@ router.route("/getSharedData:email").get(async (req, res) => {
     const pEmail = req.params.email;
     const findUser = await user.findOne({ email: pEmail });
     if (!findUser) {
-      console.log("user not found");
+      throw new error("user not found");
+      
     }
 
     res.status(200).json({ postData: [findUser.Shared] });
