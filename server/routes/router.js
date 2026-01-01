@@ -263,9 +263,19 @@ router.route("/shared:Share_email").post(async (req, res) => {
   try {
     const { shareData, sendersEmail, postUserName, postUserProfileImage } =
       req.body;
+      
     const pEmail = req.params.Share_email;
     if(!pEmail){
-         new Error("No email found")
+      return res.status(400).json({ message: " email missing" });
+        
+    }
+
+    if (!sendersEmail) {
+      return res.status(400).json({ message: "Sender email missing" });
+    }
+
+    if (!shareData) {
+      return res.status(400).json({ message: "Share data is required" });
     }
 
     const shareUserDetails = await user.findOne({ email: pEmail });
