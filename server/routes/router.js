@@ -1,7 +1,6 @@
 //npm run dev
 const express = require("express");
 const { body, param, validationResult } = require("express-validator");
-
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
@@ -13,7 +12,7 @@ const router = express.Router();
 const user = require("../models/schema");
 const { fileURLToPath } = require("url");
 const { error } = require("console");
-
+const {registerUser}=require("../controllers/userController")
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -21,46 +20,7 @@ const validateRequest = (req, res, next) => {
   }
   next();
 };
-router.route("/reg:email").post(
-  asynchandler(async (req, res) => {
-    const { name, email, password, postData } = req.body;
-    const userexist = await user.findOne({ email: email });
-
-    //updating the data
-    if (userexist) {
-      const pEmail = req.params.email;
-      const userPostData = await user.findOne({ email: pEmail });
-
-      const prevDet = [...userPostData.post_details];
-      console.log(prevDet);
-
-      const user_name = await user.findOneAndUpdate(
-        { email: pEmail },
-        { post_details: [...prevDet, postData] },
-        { new: true }
-      );
-      res.status(200).json({ user: user_name });
-
-      const dat = user_name.post_details.filter((e) => {
-        return e.postId == 123;
-      });
-    } else {
-      const actualuser = await user.create({
-        User_name: name,
-        email: email,
-        password: password,
-        post_details: postData,
-      });
-      if (actualuser) {
-        const tokenreg = jwt.sign(
-          { email: actualuser.email, id: actualuser._id },
-          SECRET_KET
-        );
-        res.status(200).json({ user: actualuser, token: tokenreg });
-      }
-    }
-  })
-);
+router.route("/reg:email").post(registerUser);
 //Create Post
 
 router.route("/Createpost:email").post(
