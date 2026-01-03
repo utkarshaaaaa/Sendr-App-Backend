@@ -20,7 +20,7 @@ const validateRequest = (req, res, next) => {
   }
   next();
 };
-router.route("/reg:email").post(registerUser);
+router.route("/reg:email").post(asynchandler(registerUser));
 //Create Post
 
 router.route("/Createpost:email").post(
