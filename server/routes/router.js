@@ -81,6 +81,7 @@ router.route("/Createpost:email").post(
         { post_details: [...prevDet, postData] },
         { new: true }
       );
+      await userexist.save();
       console.log(itemDetail.post_details)
       res.status(200).json({ itemDetail: itemDetail });
     } else {
