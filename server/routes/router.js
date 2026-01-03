@@ -13,7 +13,10 @@ const user = require("../models/schema");
 const { fileURLToPath } = require("url");
 const { error } = require("console");
 const { registerUser } = require("../controllers/userController");
-const { createPost } = require("../controllers/postController");
+const {
+  createPost,
+  getPostComments,
+} = require("../controllers/postController");
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -555,7 +558,8 @@ router.route("/addComment:email").post(async (req, res) => {
 });
 
 //get individual post comment
-router.route("/getComments:email").post(async (req, res) => {
+router.route("/getComments:email").post(
+  asynchandler(getPostComments)
   // const{postId}=req.body
   // const userEmail=req.params.email
   // const userPost = await user.findOne({ email: userEmail });
@@ -574,24 +578,7 @@ router.route("/getComments:email").post(async (req, res) => {
   //   })
 
   //   console.log(...filterPostComment)
-
-  try {
-    const userEmail = req.params.email;
-    const { postId } = req.body;
-    const findUser = await user.findOne({ email: userEmail });
-    if (!findUser) {
-      throw new error("user not found");
-    }
-
-    const comments = findUser.comment.filter((postComment) => {
-      return postComment.postId == postId;
-    });
-    console.log(comments, "comments");
-    res.status(200).json({ comment: comments });
-  } catch (error) {
-    res.status(400).json({ error: error });
-  }
-});
+);
 
 //save post data
 

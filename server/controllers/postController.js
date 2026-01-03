@@ -1,3 +1,4 @@
+const { get } = require("http");
 const user = require("../models/schema");
 async function createPost(req, res) {
   const { postData } = req.body;
@@ -24,4 +25,19 @@ async function createPost(req, res) {
   }
 }
 
-module.exports = { createPost };    
+async function getPostComments(req, res) {
+  const userEmail = req.params.email;
+  const { postId } = req.body;
+  const findUser = await user.findOne({ email: userEmail });
+  if (!findUser) {
+    throw new error("user not found");
+  }
+
+  const comments = findUser.comment.filter((postComment) => {
+    return postComment.postId == postId;
+  });
+  console.log(comments, "comments");
+  res.status(200).json({ comment: comments });
+}
+
+module.exports = { createPost ,getPostComments };
