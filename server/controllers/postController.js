@@ -1,0 +1,27 @@
+const user = require("../models/schema");
+async function createPost(req, res) {
+  const { postData } = req.body;
+
+  const pEmail = req.params.email;
+  const userexist = await user.findOne({ email: pEmail });
+
+  //updating the data
+  if (userexist) {
+    const userPostData = await user.findOne({ email: pEmail });
+
+    const prevDet = [...userPostData.post_details];
+
+    const itemDetail = await user.findOneAndUpdate(
+      { email: pEmail },
+      { post_details: [...prevDet, postData] },
+      { new: true }
+    );
+    await userexist.save();
+    console.log(itemDetail.post_details);
+    res.status(200).json({ itemDetail: itemDetail });
+  } else {
+    res.json({ error: "user does not exist" });
+  }
+}
+
+module.exports = { createPost };    

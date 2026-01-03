@@ -12,7 +12,8 @@ const router = express.Router();
 const user = require("../models/schema");
 const { fileURLToPath } = require("url");
 const { error } = require("console");
-const {registerUser}=require("../controllers/userController")
+const { registerUser } = require("../controllers/userController");
+const { createPost } = require("../controllers/postController");
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -23,32 +24,7 @@ const validateRequest = (req, res, next) => {
 router.route("/reg:email").post(asynchandler(registerUser));
 //Create Post
 
-router.route("/Createpost:email").post(
-  asynchandler(async (req, res) => {
-    const { postData } = req.body;
-    
-    const pEmail = req.params.email;
-    const userexist = await user.findOne({ email: pEmail });
-    
-    //updating the data
-    if (userexist) {
-      const userPostData = await user.findOne({ email: pEmail });
-
-      const prevDet = [...userPostData.post_details];
-
-      const itemDetail = await user.findOneAndUpdate(
-        { email: pEmail },
-        { post_details: [...prevDet, postData] },
-        { new: true }
-      );
-      await userexist.save();
-      console.log(itemDetail.post_details)
-      res.status(200).json({ itemDetail: itemDetail });
-    } else {
-      res.json({ error: "user does not exist" });
-    }
-  })
-);
+router.route("/Createpost:email").post(asynchandler(createPost));
 
 //User name and email ID
 router.route("/user_name:email").post(async (req, res) => {
@@ -204,7 +180,6 @@ router.route("/get_posts").get(async (req, res) => {
   }
 });
 
-
 //Get all users data
 router.route("/get_user_data").get(async (req, res) => {
   try {
@@ -212,23 +187,20 @@ router.route("/get_user_data").get(async (req, res) => {
     res.status(200).json({
       users: userData,
     });
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 });
-
 
 //Sharing post
 router.route("/shared:Share_email").post(async (req, res) => {
   try {
     const { shareData, sendersEmail, postUserName, postUserProfileImage } =
       req.body;
-      
+
     const pEmail = req.params.Share_email;
-    if(!pEmail){
+    if (!pEmail) {
       return res.status(400).json({ message: " email missing" });
-        
     }
 
     if (!sendersEmail) {
@@ -267,7 +239,6 @@ router.route("/getSharedData:email").get(async (req, res) => {
     const findUser = await user.findOne({ email: pEmail });
     if (!findUser) {
       throw new error("user not found");
-      
     }
 
     res.status(200).json({ postData: [findUser.Shared] });
@@ -284,9 +255,7 @@ router.route("/following:email").post(async (req, res) => {
     const { userEmail } = req.body;
     const findAccounts = await user.findOne({ email: senderEmail });
     if (!findAccounts) {
-      
       res.json({ message: "User not found" });
-      
     }
     const findUserAccounts = await user.findOne({ email: userEmail });
 
@@ -309,10 +278,12 @@ router.route("/following:email").post(async (req, res) => {
       },
       { new: true }
     );
-    res.json({email:findUserAccounts.email,following:findAccounts.Following})
-    
+    res.json({
+      email: findUserAccounts.email,
+      following: findAccounts.Following,
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 });
 
@@ -320,7 +291,6 @@ router.route("/following:email").post(async (req, res) => {
 router.route("/getFollowingData:userEmail").get(async (req, res) => {
   try {
     const Pemail = req.params.userEmail;
- 
 
     const findUserData = await user.findOne({ email: Pemail });
     if (!findUserData) {
@@ -470,7 +440,7 @@ router.route("/Declikes:email").post(async (req, res) => {
     );
     res.status(200).json({ user: updatedLikes });
   } catch (error) {
-    res.status(400).json({ "error": `Internal server error ${error}` });
+    res.status(400).json({ error: `Internal server error ${error}` });
   }
 });
 
@@ -636,7 +606,6 @@ router.route("/getFollower:user_email").get(async (req, res) => {
   }
 
   res.json({ data: findUser.Followers });
-
 });
 //Get user following
 router.route("/getFollowing:user_email").get(async (req, res) => {
@@ -649,6 +618,5 @@ router.route("/getFollowing:user_email").get(async (req, res) => {
 
   res.json({ data: findUser.Followers });
 });
-
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const asynchandler = require("express-async-handler");
+const user = require("../models/schema");
+const express = require("express");
 const { model } = require("mongoose");
 async function registerUser(req, res) {
   const { name, email, password, postData } = req.body;
@@ -39,4 +41,4 @@ async function registerUser(req, res) {
   }
 }
 
-model.exports = { registerUser };
+module.exports = { registerUser };
